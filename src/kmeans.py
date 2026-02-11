@@ -25,6 +25,45 @@ class Kmeans():
             random.seed(seed)
         points_list = list(points)
         return [np.array(p, dtype=float) for p in random.sample(points_list, K)]
+    
+    def init_centroids_plusplus(self, points, seed=None):
+        K = self.K
+        points_array = np.array(points)
+
+        if K > len(points_array):
+            raise ValueError(f"K ({K}) cannot be greater than number of points ({len(points_array)})")
+
+        if seed is not None:
+            random.seed(seed)
+            np.random.seed(seed)
+
+        centroids = []
+
+        # Choose first centroid randomly
+        first_idx = random.randint(0, len(points_array) - 1)
+        centroids.append(points_array[first_idx])
+
+        # Choose remaining centroids
+        for _ in range(K - 1):
+            distances = []
+
+            for point in points_array:
+                min_dist = min(self.distance_squared(point, centroid) for centroid in centroids)
+                distances.append(min_dist)
+
+            distances = np.array(distances)
+            total = distances.sum()
+
+            if total == 0:
+                next_centroid = points_array[random.randint(0, len(points_array) - 1)]
+            else:
+                probs = distances / total
+                next_idx = np.random.choice(len(points_array), p=probs)
+                next_centroid = points_array[next_idx]
+
+            centroids.append(next_centroid)
+
+        return centroids
     def assign_clusters(self, points, centroids):
         assignments = []
         
@@ -52,10 +91,8 @@ class Kmeans():
             if len(cluster_points) == 0:
                 new_centroid = random.choice(points)
             else:
-                mean_x = sum(p[0] for p in cluster_points) / len(cluster_points)
-                mean_y = sum(p[1] for p in cluster_points) / len(cluster_points)
-                new_centroid = np.array([mean_x, mean_y])
-
+                cluster_points = np.array(cluster_points)
+                new_centroid = cluster_points.mean(axis=0)
             new_centroids.append(new_centroid)
         return new_centroids
 

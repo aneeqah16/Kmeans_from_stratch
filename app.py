@@ -9,7 +9,7 @@ points = load_points("data/sample.csv")
 
 K = 2
 km = Kmeans(K=2 , max_iters=100)
-centroids, assignments, sse, iterations = km.kmeans(points,0.0001,init="random",verbose = True, seed = None)
+centroids, assignments, sse, iterations = km.kmeans(points,0.0001,init="kmeans++",verbose = True, seed = None)
 sizes = km.cluster_sizes()
 print("Centroids:", centroids)
 print("Assignments:", assignments)
