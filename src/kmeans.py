@@ -77,7 +77,7 @@ class Kmeans():
                 max_movement = movement
 
         return max_movement
-    def kmeans(self, points, max_iters = 100, tol = 1e-4, seed = None):
+    def kmeans(self, points, max_iters = 100, tol = 1e-4, seed = None,verbose = False):
         K = self.K
         if K < 1:
             raise ValueError("K must be at least 1")
@@ -94,7 +94,8 @@ class Kmeans():
 
             new_centroids = self.update_clusters(points, assignments)
             movement = self.max_centroid_movement(centroids, new_centroids)
-            print(f"Iteration {iteration + 1}, movement = {movement}")
+            if verbose:
+                print(f"Iteration {iteration + 1}, movement = {movement}")
             if previous_assignment is not None and previous_assignment == assignments:
                 break
 
@@ -104,13 +105,11 @@ class Kmeans():
 
             centroids = new_centroids
             previous_assignment = assignments[:]
-        iteration = iteration + 1
+        # iteration = iteration + 1
 
         sse = self.compute_sse(points, assignments, centroids)
-        
-
-
         return centroids, assignments, sse, iterations
+    
     def fit(self, points):
         points = np.array(points)
         self.centroids, self.assignments, self.sse, self.iterations = self.kmeans(points, self.max_iters)
@@ -121,7 +120,7 @@ class Kmeans():
         points = np.array(points)
         return self.assign_clusters(points, self.centroids)
     
-    
+
     
     
 
